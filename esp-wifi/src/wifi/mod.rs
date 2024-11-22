@@ -44,6 +44,7 @@ use esp_wifi_sys::include::{
 };
 #[cfg(feature = "sniffer")]
 use esp_wifi_sys::include::{
+    esp_wifi_set_channel,
     esp_wifi_80211_tx,
     esp_wifi_set_promiscuous,
     esp_wifi_set_promiscuous_rx_cb,
@@ -2388,6 +2389,15 @@ impl Sniffer {
         critical_section::with(|cs| {
             *SNIFFER_CB.borrow_ref_mut(cs) = Some(cb);
         });
+    }
+    /// Set the current channel for receiving/transmitting.
+    pub fn set_channel(&mut self, channel: u8) -> Result<(), WifiError> {
+        esp_wifi_result!(unsafe {
+            esp_wifi_set_channel(
+                channel,
+                0
+            )
+        })
     }
 }
 
